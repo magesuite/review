@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="magesuite" translate="label" sortOrder="300">
+            <label>MageSuite</label>
+        </tab>
+        <section id="review" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Review</label>
+            <tab>magesuite</tab>
+            <resource>MageSuite_Review::config_review</resource>
+            <group id="configurable_products" translate="label" type="text" sortOrder="10" showInDefault="1">
+                <label>Configurable Products</label>
+                <field id="allow_attaching_review_to_simple_products" translate="label" type="select" sortOrder="10" showInDefault="1">
+                    <label>Allow attaching reviews to simple product</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When enabled it will be possible to add review to a child product of a configurable.]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
