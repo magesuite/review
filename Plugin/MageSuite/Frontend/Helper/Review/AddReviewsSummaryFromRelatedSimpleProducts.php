@@ -39,7 +39,7 @@ class AddReviewsSummaryFromRelatedSimpleProducts
             return $reviewData;
         }
 
-        if(!$this->configuration->isAttachingToSimpleProductsEnabled()) {
+        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
             return $reviewData;
         }
 
@@ -53,6 +53,8 @@ class AddReviewsSummaryFromRelatedSimpleProducts
             $reviewData = $this->summarizeReviewData($reviewData, $usedProductReviewData);
         }
 
+        $reviewData['data']['activeStars'] = $this->getStarsAmount($reviewData);
+
         return $reviewData;
     }
 
@@ -65,14 +67,28 @@ class AddReviewsSummaryFromRelatedSimpleProducts
 
     protected function summarizeReviewData($baseData, $dataToAdd)
     {
-        if($dataToAdd['data']['count'] > 0) {
-            $baseData['data']['count'] += $dataToAdd['data']['count'];
-
-            foreach($baseData['data']['votes'] as $key => $count) {
+        if ($dataToAdd['data']['count'] > 0) {
+            foreach ($baseData['data']['votes'] as $key => $count) {
                 $baseData['data']['votes'][$key] += $dataToAdd['data']['votes'][$key];
             }
         }
 
         return $baseData;
+    }
+
+    protected function getStarsAmount($reviewData)
+    {
+        if (!isset($reviewData['data']['votes'])) {
+            return 0;
+        }
+
+        $count = 0;
+        $value = 0;
+        foreach ($reviewData['data']['votes'] as $rating => $num) {
+            $count += $num;
+            $value += $rating * $num;
+        }
+
+        return round($value / $count * 2) / 2;
     }
 }
