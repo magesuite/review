@@ -15,6 +15,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[When enabled it will be possible to add review to a child product of a configurable.]]></comment>
                 </field>
+                <field id="show_variant_on_configurable_review" translate="label" type="select" sortOrder="20" showInDefault="1">
+                    <label>Show variant on configurable product review</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When enabled it will show from which specific variant (simple product) review comes from on configurable product view reviews list.]]></comment>
+                </field>
             </group>
         </section>
     </system>
