@@ -29,6 +29,11 @@ class Configuration implements \Magento\Framework\View\Element\Block\ArgumentInt
         return $this->getConfig()->getShowVariantOnConfigurableReview();
     }
 
+    public function isReviewingSimpleProductsFromConfigurableViewEnabled()
+    {
+        return $this->getConfig()->getAllowReviewingSimpleProductsFromConfigurableView();
+    }
+
     protected function getConfig()
     {
         if (!$this->config) {

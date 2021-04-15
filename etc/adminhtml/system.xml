@@ -20,6 +20,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[When enabled it will show from which specific variant (simple product) review comes from on configurable product view reviews list.]]></comment>
                 </field>
+                <field id="allow_reviewing_simple_products_from_configurable_view" translate="label" type="select" sortOrder="30" showInDefault="1">
+                    <label>Allow reviewing simple products from configurable product view</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When enabled it will add swatches in configurable product review form, allowing to review specific product variant directly from configurable product view.]]></comment>
+                </field>
             </group>
         </section>
     </system>

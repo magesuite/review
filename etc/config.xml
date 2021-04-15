@@ -5,6 +5,7 @@
             <configurable_products>
                 <allow_attaching_review_to_simple_products>0</allow_attaching_review_to_simple_products>
                 <show_variant_on_configurable_review>0</show_variant_on_configurable_review>
+                <allow_reviewing_simple_products_from_configurable_view>0</allow_reviewing_simple_products_from_configurable_view>
             </configurable_products>
         </review>
     </default>

@@ -12,23 +12,28 @@
                 type="MageSuite\Review\Plugin\Review\Model\ResourceModel\Review\CalculateTotalReviewsCountIncludingChilds"/>
     </type>
 
-    <type name="\MageSuite\Frontend\Helper\Review">
+    <type name="MageSuite\Frontend\Helper\Review">
         <plugin name="add_reviews_summary_from_related_simple_products"
                 type="MageSuite\Review\Plugin\MageSuite\Frontend\Helper\Review\AddReviewsSummaryFromRelatedSimpleProducts"/>
     </type>
 
-    <type name="\Magento\Review\Block\Product\View">
+    <type name="Magento\Review\Block\Product\View">
         <plugin name="add_reviews_from_related_simple_products"
                 type="MageSuite\Review\Plugin\Review\Block\Product\View\AddReviewsFromRelatedSimpleProducts"/>
     </type>
 
-    <type name="\Magento\Review\Block\Product\Review">
+    <type name="Magento\Review\Block\Product\Review">
         <plugin name="update_reviews_collection_size"
                 type="MageSuite\Review\Plugin\Review\Block\Product\Review\SummarizeReviewsCount"/>
     </type>
 
-    <type name="\Magento\Review\Block\Product\ReviewRenderer">
+    <type name="Magento\Review\Block\Product\ReviewRenderer">
         <plugin name="update_reviews_collection_in_buy_box"
                 type="MageSuite\Review\Plugin\Review\Block\Product\ReviewRenderer\SummarizeReviewsInBuyBox"/>
+    </type>
+
+    <type name="Magento\Review\Controller\Product\Post">
+        <plugin name="change_product_id_to_simple_while_posting_review"
+                type="MageSuite\Review\Plugin\Review\Controller\Product\Post\ChangeProductIdToSimpleWhilePostingReview"/>
     </type>
 </config>
