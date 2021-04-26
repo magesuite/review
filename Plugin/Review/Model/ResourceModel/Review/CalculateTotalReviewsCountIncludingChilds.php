@@ -44,7 +44,7 @@ class CalculateTotalReviewsCountIncludingChilds
 
         $productType = $this->getProductType($entityPkValue);
 
-        if ($productType == 'configurable') {
+        if ($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
             return $this->getTotalReviews($entityPkValue, $approvedOnly, $storeId);
         }
 

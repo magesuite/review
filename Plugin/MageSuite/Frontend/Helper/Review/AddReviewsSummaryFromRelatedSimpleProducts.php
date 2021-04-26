@@ -35,7 +35,7 @@ class AddReviewsSummaryFromRelatedSimpleProducts
         \Magento\Catalog\Model\Product $product,
         $includeVotes = false
     ) {
-        if ($product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
+        if ($product->getTypeId() !== \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
             return $reviewData;
         }
 
@@ -43,7 +43,8 @@ class AddReviewsSummaryFromRelatedSimpleProducts
             return $reviewData;
         }
 
-        $usedProducts = $this->getUsedProducts($product);
+        $usedProducts = $product->getTypeInstance()->getUsedProducts();
+
         foreach ($usedProducts as $usedProduct) {
             $reviewHelper = $this->reviewHelperFactory->create([
                 'voteCollection' => $this->voteCollectionFactory->create()
@@ -56,13 +57,6 @@ class AddReviewsSummaryFromRelatedSimpleProducts
         $reviewData['data']['activeStars'] = $this->getStarsAmount($reviewData);
 
         return $reviewData;
-    }
-
-    protected function getUsedProducts(\Magento\Catalog\Model\Product $product)
-    {
-        /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $typeInstance */
-        $typeInstance = $product->getTypeInstance();
-        return $typeInstance->getUsedProducts($product);
     }
 
     protected function summarizeReviewData($baseData, $dataToAdd)

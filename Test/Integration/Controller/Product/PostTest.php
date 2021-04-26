@@ -9,7 +9,7 @@ class PostTest extends \Magento\TestFramework\TestCase\AbstractController
      */
     protected $productRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
