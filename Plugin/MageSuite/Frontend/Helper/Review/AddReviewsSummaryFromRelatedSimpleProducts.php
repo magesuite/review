@@ -43,7 +43,7 @@ class AddReviewsSummaryFromRelatedSimpleProducts
             return $reviewData;
         }
 
-        $usedProducts = $product->getTypeInstance()->getUsedProducts();
+        $usedProducts = $product->getTypeInstance()->getUsedProducts($product);
 
         foreach ($usedProducts as $usedProduct) {
             $reviewHelper = $this->reviewHelperFactory->create([
