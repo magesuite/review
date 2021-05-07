@@ -31,6 +31,12 @@ define([
              * @private
              */
             _OnClick: function ($this, $widget) {
+                if (this.options.isInReviewForm === false) {
+                    this._super($this, $widget);
+
+                    return;
+                }
+
                 var $parent = $this.parents('.' + $widget.options.classes.attributeClass),
                     $input = $parent.find('.' + $widget.options.classes.attributeInput),
                     $label = $parent.find('.' + $widget.options.classes.attributeSelectedOptionLabelClass),
@@ -60,36 +66,6 @@ define([
                     $this.addClass('selected');
                     $widget._toggleCheckedAttributes($this, $wrapper);
                 }
-
-
-                if (this.options.isInReviewForm) {
-                    return; // End swatches action for ones in review-form
-                } else {
-                    var additionalData = this.options.jsonSwatchConfig[attributeId]['additional_data'],
-                        checkAdditionalData = (additionalData !== undefined) ? JSON.parse(additionalData) : '' ,
-                        $priceBox = $widget.element.parents($widget.options.selectorProduct)
-                            .find(this.options.selectorProductPrice);
-
-
-                    $widget._Rebuild();
-
-                    if ($priceBox.is(':data(mage-priceBox)')) {
-                        $widget._UpdatePrice();
-                    }
-
-                    $(document).trigger('updateMsrpPriceBlock',
-                        [
-                            this._getSelectedOptionPriceIndex(),
-                            $widget.options.jsonConfig.optionPrices,
-                            $priceBox
-                        ]);
-
-                    if (parseInt(checkAdditionalData['update_product_preview_image'], 10) === 1) {
-                        $widget._loadMedia();
-                    }
-
-                    $input.trigger('change');
-                }
             },
 
             /**
@@ -100,6 +76,12 @@ define([
              * @private
              */
             _OnChange: function ($this, $widget) {
+                if (this.options.isInReviewForm === false) {
+                    this._super($this, $widget);
+
+                    return;
+                }
+
                 var $parent = $this.parents('.' + $widget.options.classes.attributeClass),
                     attributeId = $parent.data('attribute-id'),
                     $input = $parent.find('.' + $widget.options.classes.attributeInput);
@@ -116,15 +98,6 @@ define([
                 } else {
                     $parent.removeAttr('data-option-selected');
                     $input.val('');
-                }
-
-                if (this.options.isInReviewForm) {
-                    return; // End swatches action for ones in review-form
-                } else {
-                    $widget._Rebuild();
-                    $widget._UpdatePrice();
-                    $widget._loadMedia();
-                    $input.trigger('change');
                 }
             },
         });
