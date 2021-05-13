@@ -83,6 +83,10 @@ class AddReviewsSummaryFromRelatedSimpleProducts
             $value += $rating * $num;
         }
 
+        if($count == 0) {
+            return 0;
+        }
+
         return round($value / $count * 2) / 2;
     }
 }
