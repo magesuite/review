@@ -14,8 +14,8 @@
                         <argument name="more_button_text" xsi:type="string" translate="true">More</argument>
                         <argument name="more_button_limit" xsi:type="number">-1</argument>
                     </arguments>
-                    <block name="product.info.options.swatches.option" as="swatch_option" template="MageSuite_ServerSideSwatches::product/view/renderer/option.phtml"/>
-                    <block name="product.info.options.swatches.select" as="swatch_select" template="MageSuite_ServerSideSwatches::product/view/renderer/select.phtml"/>
+                    <block name="product.review.form.swatches.option" as="swatch_option" template="MageSuite_ServerSideSwatches::product/view/renderer/option.phtml"/>
+                    <block name="product.review.form.swatches.select" as="swatch_select" template="MageSuite_ServerSideSwatches::product/view/renderer/select.phtml"/>
                 </block>
             </block>
         </referenceContainer>
