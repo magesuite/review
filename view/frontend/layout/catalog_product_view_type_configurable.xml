@@ -6,6 +6,17 @@
                 <arguments>
                     <argument name="configurable_view_model" xsi:type="object">Magento\Swatches\ViewModel\Product\Renderer\Configurable</argument>
                 </arguments>
+                <block name="product.review.form.swatches.attributes" as="swatch_attributes" template="MageSuite_ServerSideSwatches::product/view/renderer/attributes.phtml">
+                    <arguments>
+                        <!-- Show all kind of options (also selects), not only visual selects -->
+                        <argument name="only_swatches" xsi:type="boolean">false</argument>
+                        <argument name="enable_control_label" xsi:type="boolean">true</argument>
+                        <argument name="more_button_text" xsi:type="string" translate="true">More</argument>
+                        <argument name="more_button_limit" xsi:type="number">-1</argument>
+                    </arguments>
+                    <block name="product.info.options.swatches.option" as="swatch_option" template="MageSuite_ServerSideSwatches::product/view/renderer/option.phtml"/>
+                    <block name="product.info.options.swatches.select" as="swatch_select" template="MageSuite_ServerSideSwatches::product/view/renderer/select.phtml"/>
+                </block>
             </block>
         </referenceContainer>
     </body>
