@@ -2,7 +2,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="product.review.form.fields.before">
-            <block class="Magento\Swatches\Block\Product\Renderer\Configurable" name="product.review.form.swatches" before="-" >
+            <block class="Magento\Swatches\Block\Product\Renderer\Configurable" name="product.review.form.swatches" before="-" ifconfig="review/configurable_products/allow_reviewing_simple_products_from_configurable_view">
                 <arguments>
                     <argument name="configurable_view_model" xsi:type="object">Magento\Swatches\ViewModel\Product\Renderer\Configurable</argument>
                     <argument name="classes" xsi:type="array">
