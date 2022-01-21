@@ -5,6 +5,16 @@
             <block class="Magento\Swatches\Block\Product\Renderer\Configurable" name="product.review.form.swatches" before="-" ifconfig="review/configurable_products/allow_reviewing_simple_products_from_configurable_view">
                 <arguments>
                     <argument name="configurable_view_model" xsi:type="object">Magento\Swatches\ViewModel\Product\Renderer\Configurable</argument>
+                    <argument name="classes" xsi:type="array">
+                        <item name="attribute" xsi:type="string">swatch-attribute</item>
+                        <item name="attribute_label" xsi:type="string">swatch-attribute-label</item>
+                        <item name="attribute_selected_option" xsi:type="string">swatch-attribute-selected-option</item>
+                        <item name="attribute_options_wrapper" xsi:type="string">swatch-attribute-options</item>
+                        <item name="attribute_input" xsi:type="string">swatch-input</item>
+                        <item name="more_button" xsi:type="string">swatch-more</item>
+                        <item name="option" xsi:type="string">swatch-option</item>
+                        <item name="select" xsi:type="string">swatch-select</item>
+                    </argument>
                 </arguments>
                 <block name="product.review.form.swatches.attributes" as="swatch_attributes" template="MageSuite_ServerSideSwatches::product/view/renderer/attributes.phtml">
                     <arguments>

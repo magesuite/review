@@ -24,6 +24,32 @@ define([
             },
 
             /**
+             * Event listener - set event listeners on swatches inside review form 
+             *
+             * @private
+             */
+            _EventListener: function() {
+                if (this.options.isInReviewForm) {
+                    var $widget = this;
+                    var options = this.options.classes;
+    
+                    $('.cs-reviews__form').on('click', function (e) {
+                        if ($(e.target).hasClass(options.optionClass)) {
+                            return $widget._OnClick($(e.target), $widget);
+                        }
+                    });
+        
+                    $('.cs-reviews__form').on('change', function (e) {
+                        if ($(e.target).hasClass(options.selectClass)) {
+                            return $widget._OnChange($(e.target), $widget);
+                        }
+                    });
+                }
+
+                this._super();
+            },
+
+            /**
              * Prevent default swatches actions (except self and input update) if method triggered by swatches in review-form
              *
              * @param $this
