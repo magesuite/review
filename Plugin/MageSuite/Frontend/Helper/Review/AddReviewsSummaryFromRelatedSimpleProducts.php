@@ -29,12 +29,8 @@ class AddReviewsSummaryFromRelatedSimpleProducts
         $this->configuration = $configuration;
     }
 
-    public function afterGetReviewSummary(
-        \MageSuite\Frontend\Helper\Review $subject,
-        array $reviewData,
-        \Magento\Catalog\Model\Product $product,
-        $includeVotes = false
-    ) {
+    public function afterGetReviewSummary(\MageSuite\Frontend\Helper\Review $subject, array $reviewData, \Magento\Catalog\Model\Product $product, $includeVotes = false)
+    {
         if ($product->getTypeId() !== \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
             return $reviewData;
         }
@@ -83,7 +79,7 @@ class AddReviewsSummaryFromRelatedSimpleProducts
             $value += $rating * $num;
         }
 
-        if($count == 0) {
+        if ($count == 0) {
             return 0;
         }
 

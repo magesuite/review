@@ -25,8 +25,7 @@ class Review
         \Magento\Review\Model\ReviewFactory $reviewFactory,
         \Magento\Review\Model\RatingFactory $ratingFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager
-    )
-    {
+    ) {
         $this->reviewFactory = $reviewFactory;
         $this->ratingFactory = $ratingFactory;
         $this->storeManager = $storeManager;
@@ -42,18 +41,16 @@ class Review
             ->save();
 
         $review = $this->reviewFactory->create();
-
         $review->setEntityId($review->getEntityIdByCode(\Magento\Review\Model\Review::ENTITY_PRODUCT_CODE))
             ->setEntityPkValue($productId)
             ->setTitle('title')
             ->setDetail('description')
             ->setNickname('anonymous')
             ->setStatusId($status)
-            ->setStoreId($storeId)
             ->setStores([$storeId])
             ->save();
 
-         $this->ratingFactory->create()
+        $this->ratingFactory->create()
             ->setRatingId(self::QUALITY_RATING_ID)
             ->setReviewId($review->getId())
             ->setStores([$storeId])

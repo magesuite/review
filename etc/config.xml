@@ -7,6 +7,9 @@
                 <show_variant_on_configurable_review>0</show_variant_on_configurable_review>
                 <allow_reviewing_simple_products_from_configurable_view>0</allow_reviewing_simple_products_from_configurable_view>
             </configurable_products>
+            <share_between_stores>
+                <is_enabled>0</is_enabled>
+            </share_between_stores>
         </review>
     </default>
 </config>

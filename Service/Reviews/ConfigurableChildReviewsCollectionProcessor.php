@@ -1,4 +1,5 @@
 <?php
+
 namespace MageSuite\Review\Service\Reviews;
 
 class ConfigurableChildReviewsCollectionProcessor
@@ -98,7 +99,7 @@ class ConfigurableChildReviewsCollectionProcessor
         $typeInstance = $configurableProduct->getTypeInstance();
         $usedProducts = $typeInstance->getUsedProducts($configurableProduct);
 
-        $simpleProduct = array_filter($usedProducts, function ($usedProduct) use ($simpleProductId) {
+        $simpleProduct = array_filter($usedProducts, function ($usedProduct) use ($simpleProductId) { //phpcs:ignore
             return (int)$usedProduct->getId() === (int)$simpleProductId;
         });
 

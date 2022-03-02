@@ -2,17 +2,19 @@
 
 namespace MageSuite\Review\Helper;
 
-class Configuration implements \Magento\Framework\View\Element\Block\ArgumentInterface
+class Configuration
 {
-    const REVIEW_CONFIGURABLE_PRODUCTS_CONFIG_PATH = 'review/configurable_products';
+    const XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_ATTACHING_REVIEW_TO_SIMPLE_PRODUCTS = 'review/configurable_products/allow_attaching_review_to_simple_products';
+    const XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_SHOW_VARIANT_ON_CONFIGURABLE_REVIEW = 'review/configurable_products/show_variant_on_configurable_review';
+    const XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_REVIEWING_SIMPLE_PRODUCTS_FROM_CONFIGURABLE_VIEW = 'review/configurable_products/allow_reviewing_simple_products_from_configurable_view';
 
-    protected $config;
+    const XML_PATH_REVIEW_SHARE_BETWEEN_STORES_IS_ENABLED = 'review/share_between_stores/is_enabled';
+    const XML_PATH_REVIEW_SHARE_BETWEEN_STORES_ADDITIONAL_STORES = 'review/share_between_stores/additional_stores';
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     protected $scopeConfig;
-
 
     public function __construct(\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface)
     {
@@ -21,31 +23,31 @@ class Configuration implements \Magento\Framework\View\Element\Block\ArgumentInt
 
     public function isAttachingToSimpleProductsEnabled()
     {
-        return $this->getConfig()->getAllowAttachingReviewToSimpleProducts();
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_ATTACHING_REVIEW_TO_SIMPLE_PRODUCTS, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     public function isDisplayingVariantOnConfigurableReviewEnabled()
     {
-        return $this->getConfig()->getShowVariantOnConfigurableReview();
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_SHOW_VARIANT_ON_CONFIGURABLE_REVIEW, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
     public function isReviewingSimpleProductsFromConfigurableViewEnabled()
     {
-        return $this->getConfig()->getAllowReviewingSimpleProductsFromConfigurableView();
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_REVIEWING_SIMPLE_PRODUCTS_FROM_CONFIGURABLE_VIEW, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
-    protected function getConfig()
+    public function isShareReviewsBetweenStoresEnabled()
     {
-        if (!$this->config) {
-            $this->config = new \Magento\Framework\DataObject(
-                $this->scopeConfig->getValue(
-                    self::REVIEW_CONFIGURABLE_PRODUCTS_CONFIG_PATH,
-                    \Magento\Store\Model\ScopeInterface::SCOPE_STORE
-                )
-            );
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_SHARE_BETWEEN_STORES_IS_ENABLED, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+    }
+
+    public function getAdditionalStoresForShareReviewsBetweenStores()
+    {
+        $data = $this->scopeConfig->getValue(self::XML_PATH_REVIEW_SHARE_BETWEEN_STORES_ADDITIONAL_STORES, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        if (empty($data)) {
+            return [];
         }
 
-        return $this->config;
+        return explode(',', $data);
     }
 }
-

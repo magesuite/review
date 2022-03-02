@@ -29,8 +29,7 @@ class CollectRatingSummaryForConfigurable
         \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MageSuite\Review\Helper\Configuration $configuration
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->configurable = $configurable;
         $this->storeManager = $storeManager;
@@ -42,15 +41,14 @@ class CollectRatingSummaryForConfigurable
         callable $proceed,
         $object,
         $onlyForCurrentStore = true
-    )
-    {
-        if(!$this->configuration->isAttachingToSimpleProductsEnabled()) {
+    ) {
+        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
             return $proceed($object, $onlyForCurrentStore);
         }
 
         $productType = $this->getProductType($object->getEntityPkValue());
 
-        if($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
+        if ($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
             return $this->getEntitySummary($object, $onlyForCurrentStore);
         }
 
@@ -137,13 +135,14 @@ class CollectRatingSummaryForConfigurable
         $entityPkValue = implode(',', $entityPkValue);
 
         if ($entityPkValue) {
-            $select->where('rating_vote.entity_pk_value IN('.$entityPkValue.')');
+            $select->where('rating_vote.entity_pk_value IN(' . $entityPkValue . ')');
         }
 
         return $connection->fetchAll($select, $bind);
     }
 
-    public function getProductType($productId) {
+    public function getProductType($productId)
+    {
         $connection = $this->resourceConnection->getConnection();
 
         $select = $connection->select()->from(
@@ -156,7 +155,7 @@ class CollectRatingSummaryForConfigurable
 
         $product = $connection->fetchRow($select);
 
-        if(empty($product)) {
+        if (empty($product)) {
             return null;
         }
 

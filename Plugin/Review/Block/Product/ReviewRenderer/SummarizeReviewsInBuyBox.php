@@ -1,4 +1,5 @@
 <?php
+
 namespace MageSuite\Review\Plugin\Review\Block\Product\ReviewRenderer;
 
 class SummarizeReviewsInBuyBox
@@ -16,15 +17,14 @@ class SummarizeReviewsInBuyBox
     public function __construct(
         \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $reviewsCollectionProcessor,
         \MageSuite\Review\Helper\Configuration $configuration
-    )
-    {
+    ) {
         $this->reviewsCollectionProcessor = $reviewsCollectionProcessor;
         $this->configuration = $configuration;
     }
 
     public function afterGetReviewsCount(\Magento\Review\Block\Product\ReviewRenderer $subject, $result)
     {
-        if(!$this->configuration->isAttachingToSimpleProductsEnabled()) {
+        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
             return $result;
         }
 

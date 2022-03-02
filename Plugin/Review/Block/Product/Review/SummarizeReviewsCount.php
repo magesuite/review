@@ -31,7 +31,7 @@ class SummarizeReviewsCount
 
     public function aroundGetCollectionSize(\Magento\Review\Block\Product\Review $subject, callable $proceed)
     {
-        if(!$this->configuration->isAttachingToSimpleProductsEnabled()) {
+        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
             return $proceed();
         }
 

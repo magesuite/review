@@ -24,8 +24,7 @@ class CalculateTotalReviewsCountIncludingChilds
         \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MageSuite\Review\Helper\Configuration $configuration
-    )
-    {
+    ) {
         $this->resourceConnection = $resourceConnection;
         $this->configurable = $configurable;
         $this->configuration = $configuration;
@@ -36,9 +35,9 @@ class CalculateTotalReviewsCountIncludingChilds
         callable $proceed,
         $entityPkValue,
         $approvedOnly = false,
-        $storeId = 0)
-    {
-        if(!$this->configuration->isAttachingToSimpleProductsEnabled()) {
+        $storeId = 0
+    ) {
+        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
             return $proceed($entityPkValue, $approvedOnly, $storeId);
         }
 
