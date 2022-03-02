@@ -26,10 +26,9 @@ class PostTest extends \Magento\TestFramework\TestCase\AbstractController
     public function testItAllowsToAddReviewForANonVisibleSimpleOfConfigurable()
     {
         $postData = [
-            'ratings' =>
-                [
-                    1 => '3',
-                ],
+            'ratings' => [
+                1 => '3',
+            ],
             'nickname' => 'test',
             'title' => 'review title',
             'detail' => 'review description',

@@ -26,6 +26,20 @@
                     <comment><![CDATA[When enabled it will add swatches in configurable product review form, allowing to review specific product variant directly from configurable product view.]]></comment>
                 </field>
             </group>
+            <group id="share_between_stores" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Share Between Stores</label>
+                <field id="is_enabled" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="0" translate="label" type="select" canRestore="1">
+                    <label>Is Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When enabled reviews added on the different store view will be visible together with reviews from current store.]]></comment>
+                </field>
+                <field id="additional_stores" translate="label" type="multiselect" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show reviews from additional stores</label>
+                    <source_model>Magento\Config\Model\Config\Source\Store</source_model>
+                    <can_be_empty>1</can_be_empty>
+                    <comment><![CDATA[Select stores from which reviews will be visible together with reviews from current store.]]></comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

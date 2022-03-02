@@ -1,4 +1,5 @@
 <?php
+
 namespace MageSuite\Review\Test\Integration\Helper\Review;
 
 class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\TestCase

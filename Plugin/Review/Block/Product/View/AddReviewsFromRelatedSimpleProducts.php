@@ -33,7 +33,7 @@ class AddReviewsFromRelatedSimpleProducts
         \Magento\Review\Block\Product\View $subject,
         callable $proceed
     ) {
-        if(!$this->configuration->isAttachingToSimpleProductsEnabled()) {
+        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
             return $proceed();
         }
 

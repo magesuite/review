@@ -1,4 +1,5 @@
 <?php
+
 namespace MageSuite\Review\Plugin\Review\Controller\Product\Post;
 
 class ChangeProductIdToSimpleWhilePostingReview
