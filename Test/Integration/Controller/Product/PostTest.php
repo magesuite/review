@@ -12,7 +12,6 @@ class PostTest extends \Magento\TestFramework\TestCase\AbstractController
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->productRepository = $this->_objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
     }
 
@@ -21,7 +20,7 @@ class PostTest extends \Magento\TestFramework\TestCase\AbstractController
      * @magentoDbIsolation enabled
      * @magentoAppArea frontend
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     * @magentoConfigFixture current_store review/configurable_products/allow_attaching_review_to_simple_products 1
+     * @magentoConfigFixture default/review/configurable_products/allow_attaching_review_to_simple_products 1
      */
     public function testItAllowsToAddReviewForANonVisibleSimpleOfConfigurable()
     {
