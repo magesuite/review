@@ -36,4 +36,12 @@
         <plugin name="change_product_id_to_simple_while_posting_review"
                 type="MageSuite\Review\Plugin\Review\Controller\Product\Post\ChangeProductIdToSimpleWhilePostingReview"/>
     </type>
+
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="assign_review_to_multiple_stores" xsi:type="object">MageSuite\Review\Console\Command\AssignReviewToMultipleStores</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

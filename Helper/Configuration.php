@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MageSuite\Review\Helper;
 
@@ -7,7 +8,6 @@ class Configuration
     const XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_ATTACHING_REVIEW_TO_SIMPLE_PRODUCTS = 'review/configurable_products/allow_attaching_review_to_simple_products';
     const XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_SHOW_VARIANT_ON_CONFIGURABLE_REVIEW = 'review/configurable_products/show_variant_on_configurable_review';
     const XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_REVIEWING_SIMPLE_PRODUCTS_FROM_CONFIGURABLE_VIEW = 'review/configurable_products/allow_reviewing_simple_products_from_configurable_view';
-
     const XML_PATH_REVIEW_SHARE_BETWEEN_STORES_IS_ENABLED = 'review/share_between_stores/is_enabled';
     const XML_PATH_REVIEW_SHARE_BETWEEN_STORES_ADDITIONAL_STORES = 'review/share_between_stores/additional_stores';
 
@@ -21,33 +21,42 @@ class Configuration
         $this->scopeConfig = $scopeConfigInterface;
     }
 
-    public function isAttachingToSimpleProductsEnabled()
+    public function isAttachingToSimpleProductsEnabled(): bool
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_ATTACHING_REVIEW_TO_SIMPLE_PRODUCTS, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_ATTACHING_REVIEW_TO_SIMPLE_PRODUCTS);
     }
 
-    public function isDisplayingVariantOnConfigurableReviewEnabled()
+    public function isDisplayingVariantOnConfigurableReviewEnabled(): bool
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_SHOW_VARIANT_ON_CONFIGURABLE_REVIEW, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_SHOW_VARIANT_ON_CONFIGURABLE_REVIEW);
     }
 
-    public function isReviewingSimpleProductsFromConfigurableViewEnabled()
+    public function isReviewingSimpleProductsFromConfigurableViewEnabled(): bool
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_REVIEWING_SIMPLE_PRODUCTS_FROM_CONFIGURABLE_VIEW, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_CONFIGURABLE_PRODUCTS_ALLOW_REVIEWING_SIMPLE_PRODUCTS_FROM_CONFIGURABLE_VIEW);
     }
 
-    public function isShareReviewsBetweenStoresEnabled()
+    public function isShareReviewsBetweenStoresEnabled($storeId = null): bool
     {
-        return $this->scopeConfig->isSetFlag(self::XML_PATH_REVIEW_SHARE_BETWEEN_STORES_IS_ENABLED, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PATH_REVIEW_SHARE_BETWEEN_STORES_IS_ENABLED,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
     }
 
-    public function getAdditionalStoresForShareReviewsBetweenStores()
+    public function getAdditionalStoresForShareReviewsBetweenStores($storeId = null): array
     {
-        $data = $this->scopeConfig->getValue(self::XML_PATH_REVIEW_SHARE_BETWEEN_STORES_ADDITIONAL_STORES, \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        if (empty($data)) {
+        $value = $this->scopeConfig->getValue(
+            self::XML_PATH_REVIEW_SHARE_BETWEEN_STORES_ADDITIONAL_STORES,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        if (empty($value)) {
             return [];
         }
 
-        return explode(',', $data);
+        return explode(',', $value);
     }
 }

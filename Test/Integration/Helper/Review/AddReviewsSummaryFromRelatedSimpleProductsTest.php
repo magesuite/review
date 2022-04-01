@@ -43,7 +43,7 @@ class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\
      * @magentoDbIsolation enabled
      * @magentoAppArea frontend
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     * @magentoConfigFixture current_store review/configurable_products/allow_attaching_review_to_simple_products 1
+     * @magentoConfigFixture default/review/configurable_products/allow_attaching_review_to_simple_products 1
      */
     public function testReviewSummaryIsCalculatedForApprovedReviewsIncludingAllChildProducts()
     {

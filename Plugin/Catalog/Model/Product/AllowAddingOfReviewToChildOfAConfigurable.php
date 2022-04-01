@@ -24,7 +24,7 @@ class AllowAddingOfReviewToChildOfAConfigurable
 
     public function afterIsVisibleInCatalog(\Magento\Catalog\Model\Product $subject, $result)
     {
-        if ($this->configuration->isAttachingToSimpleProductsEnabled() && $this->request->getFullActionName() == 'review_product_post') {
+        if ($this->isApplicable()) {
             return true;
         }
 
@@ -33,10 +33,16 @@ class AllowAddingOfReviewToChildOfAConfigurable
 
     public function afterIsVisibleInSiteVisibility(\Magento\Catalog\Model\Product $subject, $result)
     {
-        if ($this->configuration->isAttachingToSimpleProductsEnabled() && $this->request->getFullActionName() == 'review_product_post') {
+        if ($this->isApplicable()) {
             return true;
         }
 
         return $result;
+    }
+
+    protected function isApplicable(): bool
+    {
+        return $this->configuration->isAttachingToSimpleProductsEnabled()
+            && $this->request->getFullActionName() == 'review_product_post';
     }
 }
