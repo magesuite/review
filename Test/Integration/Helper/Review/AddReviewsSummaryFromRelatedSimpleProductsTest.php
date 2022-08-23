@@ -2,32 +2,22 @@
 
 namespace MageSuite\Review\Test\Integration\Helper\Review;
 
+/**
+ * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
+ * @magentoAppArea frontend
+ */
 class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    protected $objectManager;
+    protected ?\Magento\TestFramework\ObjectManager $objectManager;
 
-    /**
-     * @var \MageSuite\Review\Test\Integration\Helper\Review
-     */
-    protected $testReviewHelper;
+    protected ?\MageSuite\Review\Test\Integration\Helper\Review $testReviewHelper;
 
-    /**
-     * @var \MageSuite\Frontend\Helper\Review
-     */
-    protected $frontendReviewHelper;
+    protected ?\MageSuite\Frontend\Helper\Review $frontendReviewHelper;
 
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
+    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
 
-    /**
-     * @var \Magento\Review\Model\Review
-     */
-    protected $reviewModel;
+    protected ?\Magento\Review\Model\Review $reviewModel;
 
     public function setUp(): void
     {
@@ -39,13 +29,10 @@ class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\
     }
 
     /**
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation enabled
-     * @magentoAppArea frontend
      * @magentoDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
      * @magentoConfigFixture default/review/configurable_products/allow_attaching_review_to_simple_products 1
      */
-    public function testReviewSummaryIsCalculatedForApprovedReviewsIncludingAllChildProducts()
+    public function testReviewSummaryIsCalculatedForApprovedReviewsIncludingAllChildProductsForConfigurableProduct()
     {
         $this->testReviewHelper->createReview(10, 3);
         $this->testReviewHelper->createReview(10, 4);
@@ -55,6 +42,29 @@ class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\
         $this->testReviewHelper->createReview(20, 1, \Magento\Review\Model\Review::STATUS_NOT_APPROVED);
 
         $product = $this->productRepository->get('configurable');
+
+        $this->reviewModel->getEntitySummary($product, 1);
+
+        $reviewSummary = $this->frontendReviewHelper->getReviewSummary($product);
+
+        $this->assertEquals(4, $reviewSummary['data']['count']);
+        $this->assertEquals(3.5, $reviewSummary['data']['activeStars']);
+    }
+
+    /**
+     * @magentoDataFixture Magento/GroupedProduct/_files/product_grouped.php
+     * @magentoConfigFixture default/review/grouped_products/show_reviews_from_assigned_products 1
+     */
+    public function testReviewSummaryIsCalculatedForApprovedReviewsIncludingAllChildProductsForGroupedProduct()
+    {
+        $this->testReviewHelper->createReview(1, 3);
+        $this->testReviewHelper->createReview(1, 4);
+        $this->testReviewHelper->createReview(1, 5);
+        $this->testReviewHelper->createReview(21, 1);
+        $this->testReviewHelper->createReview(21, 1, \Magento\Review\Model\Review::STATUS_PENDING);
+        $this->testReviewHelper->createReview(21, 1, \Magento\Review\Model\Review::STATUS_NOT_APPROVED);
+
+        $product = $this->productRepository->get('grouped-product');
 
         $this->reviewModel->getEntitySummary($product, 1);
 

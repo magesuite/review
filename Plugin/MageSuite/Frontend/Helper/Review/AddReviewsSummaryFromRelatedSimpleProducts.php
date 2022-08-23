@@ -4,50 +4,46 @@ namespace MageSuite\Review\Plugin\MageSuite\Frontend\Helper\Review;
 
 class AddReviewsSummaryFromRelatedSimpleProducts
 {
-    /**
-     * @var \MageSuite\Frontend\Helper\ReviewFactory
-     */
-    protected $reviewHelperFactory;
+    protected \Magento\Review\Model\ResourceModel\Rating\Option\Vote\CollectionFactory $voteCollectionFactory;
 
-    /**
-     * @var \Magento\Review\Model\ResourceModel\Rating\Option\Vote\CollectionFactory
-     */
-    protected $voteCollectionFactory;
+    protected \MageSuite\Frontend\Helper\ReviewFactory $reviewHelperFactory;
 
-    /**
-     * @var \MageSuite\Review\Helper\Configuration
-     */
-    protected $configuration;
+    protected \MageSuite\Review\Helper\Configuration $configuration;
 
     public function __construct(
-        \MageSuite\Frontend\Helper\ReviewFactory $reviewHelperFactory,
         \Magento\Review\Model\ResourceModel\Rating\Option\Vote\CollectionFactory $voteCollectionFactory,
+        \MageSuite\Frontend\Helper\ReviewFactory $reviewHelperFactory,
         \MageSuite\Review\Helper\Configuration $configuration
     ) {
-        $this->reviewHelperFactory = $reviewHelperFactory;
         $this->voteCollectionFactory = $voteCollectionFactory;
+        $this->reviewHelperFactory = $reviewHelperFactory;
         $this->configuration = $configuration;
     }
 
     public function afterGetReviewSummary(\MageSuite\Frontend\Helper\Review $subject, array $reviewData, \Magento\Catalog\Model\Product $product, $includeVotes = false)
     {
-        if ($product->getTypeId() !== \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
+        $productType = $product->getTypeId();
+        $childrenProducts = [];
+
+        if ($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE && $this->configuration->isAttachingToSimpleProductsEnabled()) {
+            $childrenProducts = $product->getTypeInstance()->getUsedProducts($product);
+        }
+
+        if ($productType === \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE && $this->configuration->isGroupedProductsShowReviewsFromAssignedProductsEnabled()) {
+            $childrenProducts = $product->getTypeInstance()->getAssociatedProducts($product);
+        }
+
+        if (empty($childrenProducts)) {
             return $reviewData;
         }
 
-        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
-            return $reviewData;
-        }
-
-        $usedProducts = $product->getTypeInstance()->getUsedProducts($product);
-
-        foreach ($usedProducts as $usedProduct) {
+        foreach ($childrenProducts as $childProduct) {
             $reviewHelper = $this->reviewHelperFactory->create([
                 'voteCollection' => $this->voteCollectionFactory->create()
             ]);
 
-            $usedProductReviewData = $reviewHelper->getReviewSummary($usedProduct, true);
-            $reviewData = $this->summarizeReviewData($reviewData, $usedProductReviewData);
+            $childProductReviewData = $reviewHelper->getReviewSummary($childProduct, true);
+            $reviewData = $this->summarizeReviewData($reviewData, $childProductReviewData);
         }
 
         $reviewData['data']['activeStars'] = $this->getStarsAmount($reviewData);

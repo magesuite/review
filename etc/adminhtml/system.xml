@@ -26,7 +26,15 @@
                     <comment><![CDATA[When enabled it will add swatches in configurable product review form, allowing to review specific product variant directly from configurable product view.]]></comment>
                 </field>
             </group>
-            <group id="share_between_stores" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="grouped_products" translate="label" type="text" sortOrder="20" showInDefault="1">
+                <label>Grouped Products</label>
+                <field id="show_reviews_from_assigned_products" translate="label" type="select" sortOrder="10" showInDefault="1">
+                    <label>Show Reviews From Assigned Products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When enabled reviews from Assigned products will be visible on a grouped.]]></comment>
+                </field>
+            </group>
+            <group id="share_between_stores" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Share Between Stores</label>
                 <field id="is_enabled" showInDefault="1" showInWebsite="1" showInStore="1" sortOrder="0" translate="label" type="select" canRestore="1">
                     <label>Is Enabled</label>

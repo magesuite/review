@@ -4,45 +4,39 @@ namespace MageSuite\Review\Plugin\Review\Block\Product\View;
 
 class AddReviewsFromRelatedSimpleProducts
 {
-    /**
-     * @var \Magento\Store\Model\StoreManager
-     */
-    protected $storeManager;
+    protected \Magento\Store\Model\StoreManager $storeManager;
 
-    /**
-     * @var \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor
-     */
-    protected $reviewsCollectionProcessor;
+    protected \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $configurableReviewsCollectionProcessor;
 
-    /**
-     * @var \MageSuite\Review\Helper\Configuration
-     */
-    protected $configuration;
+    protected \MageSuite\Review\Service\Reviews\GroupedChildReviewsCollectionProcessor $groupedReviewsCollectionProcessor;
+
+    protected \MageSuite\Review\Helper\Configuration $configuration;
 
     public function __construct(
         \Magento\Store\Model\StoreManager $storeManager,
-        \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $reviewsCollectionProcessor,
+        \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $configurableReviewsCollectionProcessor,
+        \MageSuite\Review\Service\Reviews\GroupedChildReviewsCollectionProcessor $groupedReviewsCollectionProcessor,
         \MageSuite\Review\Helper\Configuration $configuration
     ) {
         $this->storeManager = $storeManager;
-        $this->reviewsCollectionProcessor = $reviewsCollectionProcessor;
+        $this->configurableReviewsCollectionProcessor = $configurableReviewsCollectionProcessor;
+        $this->groupedReviewsCollectionProcessor = $groupedReviewsCollectionProcessor;
         $this->configuration = $configuration;
     }
 
-    public function aroundGetReviewsCollection(
-        \Magento\Review\Block\Product\View $subject,
-        callable $proceed
-    ) {
-        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
-            return $proceed();
-        }
-
+    public function aroundGetReviewsCollection(\Magento\Review\Block\Product\View $subject, \Closure $proceed)
+    {
         $product = $subject->getProduct();
+        $productType = $product->getTypeId();
 
-        if ($product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
-            return $proceed();
+        if ($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE && $this->configuration->isAttachingToSimpleProductsEnabled()) {
+            return $this->configurableReviewsCollectionProcessor->getCollectionForConfigurableProduct($product);
         }
 
-        return $this->reviewsCollectionProcessor->getCollectionForConfigurableProduct($product);
+        if ($productType === \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE && $this->configuration->isGroupedProductsShowReviewsFromAssignedProductsEnabled()) {
+            return $this->groupedReviewsCollectionProcessor->getCollectionForGroupedProduct($product);
+        }
+
+        return $proceed();
     }
 }

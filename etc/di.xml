@@ -1,40 +1,32 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-
     <type name="Magento\Review\Model\ResourceModel\Rating">
-        <plugin sortOrder="10" name="collect_rating_summary_for_configurable"
-                type="MageSuite\Review\Plugin\Review\Model\ResourceModel\Rating\CollectRatingSummaryForConfigurable"/>
+        <plugin name="collect_rating_summary_for_configurable_and_grouped" type="MageSuite\Review\Plugin\Review\Model\ResourceModel\Rating\CollectRatingSummaryForConfigurableAndGrouped" sortOrder="10" />
     </type>
+
     <type name="Magento\Review\Model\ResourceModel\Review">
-        <plugin sortOrder="10" name="aggregate_configurable_parent_after_child_aggregation"
-                type="MageSuite\Review\Plugin\Review\Model\ResourceModel\Review\AggregateConfigurableParentAfterChildAggregation"/>
-        <plugin sortOrder="20" name="calculate_total_reviews_count_including_childs"
-                type="MageSuite\Review\Plugin\Review\Model\ResourceModel\Review\CalculateTotalReviewsCountIncludingChilds"/>
+        <plugin name="aggregate_parent_after_child_aggregation" type="MageSuite\Review\Plugin\Review\Model\ResourceModel\Review\AggregateParentAfterChildAggregation" sortOrder="10" />
+        <plugin name="calculate_total_reviews_count_including_children" type="MageSuite\Review\Plugin\Review\Model\ResourceModel\Review\CalculateTotalReviewsCountIncludingChildren" sortOrder="20" />
     </type>
 
     <type name="MageSuite\Frontend\Helper\Review">
-        <plugin name="add_reviews_summary_from_related_simple_products"
-                type="MageSuite\Review\Plugin\MageSuite\Frontend\Helper\Review\AddReviewsSummaryFromRelatedSimpleProducts"/>
+        <plugin name="add_reviews_summary_from_related_simple_products" type="MageSuite\Review\Plugin\MageSuite\Frontend\Helper\Review\AddReviewsSummaryFromRelatedSimpleProducts"/>
     </type>
 
     <type name="Magento\Review\Block\Product\View">
-        <plugin name="add_reviews_from_related_simple_products"
-                type="MageSuite\Review\Plugin\Review\Block\Product\View\AddReviewsFromRelatedSimpleProducts"/>
+        <plugin name="add_reviews_from_related_simple_products" type="MageSuite\Review\Plugin\Review\Block\Product\View\AddReviewsFromRelatedSimpleProducts"/>
     </type>
 
     <type name="Magento\Review\Block\Product\Review">
-        <plugin name="update_reviews_collection_size"
-                type="MageSuite\Review\Plugin\Review\Block\Product\Review\SummarizeReviewsCount"/>
+        <plugin name="update_reviews_collection_size" type="MageSuite\Review\Plugin\Review\Block\Product\Review\SummarizeReviewsCount"/>
     </type>
 
     <type name="Magento\Review\Block\Product\ReviewRenderer">
-        <plugin name="update_reviews_collection_in_buy_box"
-                type="MageSuite\Review\Plugin\Review\Block\Product\ReviewRenderer\SummarizeReviewsInBuyBox"/>
+        <plugin name="update_reviews_collection_in_buy_box" type="MageSuite\Review\Plugin\Review\Block\Product\ReviewRenderer\SummarizeReviewsInBuyBox"/>
     </type>
 
     <type name="Magento\Review\Controller\Product\Post">
-        <plugin name="change_product_id_to_simple_while_posting_review"
-                type="MageSuite\Review\Plugin\Review\Controller\Product\Post\ChangeProductIdToSimpleWhilePostingReview"/>
+        <plugin name="change_product_id_to_simple_while_posting_review" type="MageSuite\Review\Plugin\Review\Controller\Product\Post\ChangeProductIdToSimpleWhilePostingReview"/>
     </type>
 
     <type name="Magento\Framework\Console\CommandList">

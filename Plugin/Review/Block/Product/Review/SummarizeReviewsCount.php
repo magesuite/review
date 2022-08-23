@@ -4,44 +4,42 @@ namespace MageSuite\Review\Plugin\Review\Block\Product\Review;
 
 class SummarizeReviewsCount
 {
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $coreRegistry;
+    protected \Magento\Framework\Registry $coreRegistry;
 
-    /**
-     * @var \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor
-     */
-    protected $reviewsCollectionProcessor;
+    protected \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $configurableReviewsCollectionProcessor;
 
-    /**
-     * @var \MageSuite\Review\Helper\Configuration
-     */
-    protected $configuration;
+    protected \MageSuite\Review\Service\Reviews\GroupedChildReviewsCollectionProcessor $groupedReviewsCollectionProcessor;
+
+    protected \MageSuite\Review\Helper\Configuration $configuration;
 
     public function __construct(
         \Magento\Framework\Registry $registry,
-        \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $reviewsCollectionProcessor,
+        \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $configurableReviewsCollectionProcessor,
+        \MageSuite\Review\Service\Reviews\GroupedChildReviewsCollectionProcessor $groupedReviewsCollectionProcessor,
         \MageSuite\Review\Helper\Configuration $configuration
     ) {
         $this->coreRegistry = $registry;
-        $this->reviewsCollectionProcessor = $reviewsCollectionProcessor;
+        $this->configurableReviewsCollectionProcessor = $configurableReviewsCollectionProcessor;
+        $this->groupedReviewsCollectionProcessor = $groupedReviewsCollectionProcessor;
         $this->configuration = $configuration;
     }
 
-    public function aroundGetCollectionSize(\Magento\Review\Block\Product\Review $subject, callable $proceed)
+    public function aroundGetCollectionSize(\Magento\Review\Block\Product\Review $subject, \Closure $proceed)
     {
-        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
-            return $proceed();
-        }
-
         $product = $this->getCurrentProduct();
-        if ($product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
-            return $proceed();
+        $productType = $product->getTypeId();
+
+        if ($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE && $this->configuration->isAttachingToSimpleProductsEnabled()) {
+            $reviewCollection = $this->configurableReviewsCollectionProcessor->getCollectionForConfigurableProduct($product);
+            return $reviewCollection->getSize();
         }
 
-        $reviewCollection = $this->reviewsCollectionProcessor->getCollectionForConfigurableProduct($product);
-        return $reviewCollection->getSize();
+        if ($productType === \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE && $this->configuration->isGroupedProductsShowReviewsFromAssignedProductsEnabled()) {
+            $reviewCollection = $this->groupedReviewsCollectionProcessor->getCollectionForGroupedProduct($product);
+            return $reviewCollection->getSize();
+        }
+
+        return $proceed();
     }
 
     protected function getCurrentProduct()
