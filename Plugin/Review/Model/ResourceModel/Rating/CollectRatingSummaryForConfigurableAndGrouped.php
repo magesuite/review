@@ -2,62 +2,50 @@
 
 namespace MageSuite\Review\Plugin\Review\Model\ResourceModel\Rating;
 
-class CollectRatingSummaryForConfigurable
+class CollectRatingSummaryForConfigurableAndGrouped
 {
-    /**
-     * @var \Magento\Framework\App\ResourceConnection
-     */
-    protected $resourceConnection;
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
 
-    /**
-     * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
-     */
-    protected $configurable;
+    protected \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable;
 
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    protected $storeManager;
+    protected \Magento\Store\Model\StoreManagerInterface $storeManager;
 
-    /**
-     * @var \MageSuite\Review\Helper\Configuration
-     */
-    protected $configuration;
+    protected \MageSuite\Review\Helper\Configuration $configuration;
+
+    protected \MageSuite\Review\Model\ResourceModel\Product $productResourceModel;
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \MageSuite\Review\Helper\Configuration $configuration
+        \MageSuite\Review\Helper\Configuration $configuration,
+        \MageSuite\Review\Model\ResourceModel\Product $productResourceModel
     ) {
         $this->resourceConnection = $resourceConnection;
         $this->configurable = $configurable;
         $this->storeManager = $storeManager;
         $this->configuration = $configuration;
+        $this->productResourceModel = $productResourceModel;
     }
 
-    public function aroundGetEntitySummary(
-        \Magento\Review\Model\ResourceModel\Rating $subject,
-        callable $proceed,
-        $object,
-        $onlyForCurrentStore = true
-    ) {
-        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
-            return $proceed($object, $onlyForCurrentStore);
+    public function aroundGetEntitySummary(\Magento\Review\Model\ResourceModel\Rating $subject, \Closure $proceed, $object, $onlyForCurrentStore = true)
+    {
+        $productType = $this->productResourceModel->getProductType($object->getEntityPkValue());
+
+        if ($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE && $this->configuration->isAttachingToSimpleProductsEnabled()) {
+            return $this->getEntitySummary($object, $onlyForCurrentStore, $productType);
         }
 
-        $productType = $this->getProductType($object->getEntityPkValue());
-
-        if ($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
-            return $this->getEntitySummary($object, $onlyForCurrentStore);
+        if ($productType === \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE && $this->configuration->isGroupedProductsShowReviewsFromAssignedProductsEnabled()) {
+            return $this->getEntitySummary($object, $onlyForCurrentStore, $productType);
         }
 
         return $proceed($object, $onlyForCurrentStore);
     }
 
-    protected function getEntitySummary($object, $onlyForCurrentStore)
+    protected function getEntitySummary($object, $onlyForCurrentStore, $productType)
     {
-        $data = $this->_getEntitySummaryData($object);
+        $data = $this->_getEntitySummaryData($object, $productType);
 
         if ($onlyForCurrentStore) {
             foreach ($data as $row) {
@@ -90,7 +78,7 @@ class CollectRatingSummaryForConfigurable
         return array_values($result);
     }
 
-    protected function _getEntitySummaryData($object)
+    protected function _getEntitySummaryData($object, $productType)
     {
         $connection = $this->resourceConnection->getConnection();
 
@@ -129,7 +117,7 @@ class CollectRatingSummaryForConfigurable
 
         $entityPkValue = array_merge(
             [$object->getEntityPkValue()],
-            $this->getChilds($object->getEntityPkValue())
+            $this->productResourceModel->getChildrenIds($object->getEntityPkValue(), $productType)
         );
 
         $entityPkValue = implode(',', $entityPkValue);
@@ -139,31 +127,5 @@ class CollectRatingSummaryForConfigurable
         }
 
         return $connection->fetchAll($select, $bind);
-    }
-
-    public function getProductType($productId)
-    {
-        $connection = $this->resourceConnection->getConnection();
-
-        $select = $connection->select()->from(
-            $connection->getTableName('catalog_product_entity'),
-            ['type_id']
-        )->where(
-            'entity_id IN (?)',
-            $productId
-        );
-
-        $product = $connection->fetchRow($select);
-
-        if (empty($product)) {
-            return null;
-        }
-
-        return $product['type_id'];
-    }
-
-    protected function getChilds($parentProductId)
-    {
-        return $this->configurable->getChildrenIds($parentProductId)[0];
     }
 }

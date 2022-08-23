@@ -4,37 +4,37 @@ namespace MageSuite\Review\Plugin\Review\Block\Product\ReviewRenderer;
 
 class SummarizeReviewsInBuyBox
 {
-    /**
-     * @var \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor
-     */
-    protected $reviewsCollectionProcessor;
+    protected \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $configurableReviewsCollectionProcessor;
 
-    /**
-     * @var \MageSuite\Review\Helper\Configuration
-     */
-    protected $configuration;
+    protected \MageSuite\Review\Service\Reviews\GroupedChildReviewsCollectionProcessor $groupedReviewsCollectionProcessor;
+
+    protected \MageSuite\Review\Helper\Configuration $configuration;
 
     public function __construct(
-        \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $reviewsCollectionProcessor,
+        \MageSuite\Review\Service\Reviews\ConfigurableChildReviewsCollectionProcessor $configurableReviewsCollectionProcessor,
+        \MageSuite\Review\Service\Reviews\GroupedChildReviewsCollectionProcessor $groupedReviewsCollectionProcessor,
         \MageSuite\Review\Helper\Configuration $configuration
     ) {
-        $this->reviewsCollectionProcessor = $reviewsCollectionProcessor;
+        $this->configurableReviewsCollectionProcessor = $configurableReviewsCollectionProcessor;
+        $this->groupedReviewsCollectionProcessor = $groupedReviewsCollectionProcessor;
         $this->configuration = $configuration;
     }
 
     public function afterGetReviewsCount(\Magento\Review\Block\Product\ReviewRenderer $subject, $result)
     {
-        if (!$this->configuration->isAttachingToSimpleProductsEnabled()) {
-            return $result;
-        }
-
         $product = $subject->getProduct();
+        $productType = $product->getTypeId();
 
-        if ($product->getTypeId() !== \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
-            return $result;
+        if ($productType === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE && $this->configuration->isAttachingToSimpleProductsEnabled()) {
+            $reviewCollection = $this->configurableReviewsCollectionProcessor->getCollectionForConfigurableProduct($product);
+            return $reviewCollection->getSize();
         }
 
-        $reviewCollection = $this->reviewsCollectionProcessor->getCollectionForConfigurableProduct($product);
-        return $reviewCollection->getSize();
+        if ($productType === \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE && $this->configuration->isGroupedProductsShowReviewsFromAssignedProductsEnabled()) {
+            $reviewCollection = $this->groupedReviewsCollectionProcessor->getCollectionForGroupedProduct($product);
+            return $reviewCollection->getSize();
+        }
+
+        return $result;
     }
 }
