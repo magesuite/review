@@ -14,7 +14,7 @@ class ConfigurableChildReviewsCollectionProcessor extends ChildReviewsCollection
         parent::createReviewCollection($product);
 
         if ($this->configuration->isDisplayingVariantOnConfigurableReviewEnabled()) {
-            $this->addReviewConfigurationDataToCollection($product);
+            $this->addReviewConfigurationDataToItems($product);
         }
 
         return $this->reviewsCollection;
@@ -34,12 +34,18 @@ class ConfigurableChildReviewsCollectionProcessor extends ChildReviewsCollection
         return $productIds;
     }
 
-    protected function addReviewConfigurationDataToCollection(\Magento\Catalog\Model\Product $product)
+    public function addReviewConfigurationDataToItems(\Magento\Catalog\Api\Data\ProductInterface $product, array &$items): array
     {
-        foreach ($this->reviewsCollection as $review) {
+        if ($product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
+            return [];
+        }
+
+        foreach ($items as $review) {
             /** @var \Magento\Review\Model\Review $review */
             $review->setData('review_configuration_data', $this->getConfigurationData($product, $review->getEntityPkValue()));
         }
+
+        return $items;
     }
 
     protected function getConfigurationData(\Magento\Catalog\Model\Product $configurableProduct, $simpleProductId)
