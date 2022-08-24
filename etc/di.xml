@@ -29,6 +29,11 @@
         <plugin name="change_product_id_to_simple_while_posting_review" type="MageSuite\Review\Plugin\Review\Controller\Product\Post\ChangeProductIdToSimpleWhilePostingReview"/>
     </type>
 
+    <type name="Magento\Review\Model\ResourceModel\Review\Collection">
+        <plugin name="add_review_configuration_data_to_items"
+                type="MageSuite\Review\Plugin\Review\Model\ResourceModel\Review\Collection\AddReviewConfigurationDataToItems"/>
+    </type>
+
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">

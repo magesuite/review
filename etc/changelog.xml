@@ -16,6 +16,13 @@
                     <ticket_id>IPET-1411</ticket_id>
                 </entry>
             </tag>
+            <tag version="v1.2.1" date="2022-08-24">
+                <entry>
+                    <type>FIX</type>
+                    <overview>Fix button 'show more', which not hide after load last items</overview>
+                    <ticket_id>MGS-4372</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>
