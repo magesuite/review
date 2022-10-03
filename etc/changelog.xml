@@ -23,6 +23,13 @@
                     <ticket_id>MGS-4372</ticket_id>
                 </entry>
             </tag>
+            <tag version="v1.2.2" date="2022-08-24">
+                <entry>
+                    <type>FIX</type>
+                    <overview>Add missed children array of configurable product to addReviewConfigrationDataToItems() method</overview>
+                    <ticket_id>MGS-4731</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>
