@@ -14,7 +14,8 @@ class ConfigurableChildReviewsCollectionProcessor extends ChildReviewsCollection
         parent::createReviewCollection($product);
 
         if ($this->configuration->isDisplayingVariantOnConfigurableReviewEnabled()) {
-            $this->addReviewConfigurationDataToItems($product);
+            $items = $product->getTypeInstance()->getUsedProducts($product);
+            $this->addReviewConfigurationDataToItems($product, $items);
         }
 
         return $this->reviewsCollection;
