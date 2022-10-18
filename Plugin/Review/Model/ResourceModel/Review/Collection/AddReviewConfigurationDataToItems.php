@@ -38,8 +38,11 @@ class AddReviewConfigurationDataToItems
         }
 
         $product = $this->getProduct();
-
         if (empty($product)) {
+            return $items;
+        }
+
+        if ($product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
             return $items;
         }
 
