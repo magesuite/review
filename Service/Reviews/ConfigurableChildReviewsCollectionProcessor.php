@@ -37,10 +37,6 @@ class ConfigurableChildReviewsCollectionProcessor extends ChildReviewsCollection
 
     public function addReviewConfigurationDataToItems(\Magento\Catalog\Api\Data\ProductInterface $product, array &$items): array
     {
-        if ($product->getTypeId() != \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
-            return [];
-        }
-
         foreach ($items as $review) {
             /** @var \Magento\Review\Model\Review $review */
             $review->setData('review_configuration_data', $this->getConfigurationData($product, $review->getEntityPkValue()));

@@ -51,7 +51,7 @@ abstract class ChildReviewsCollectionProcessor
         $reviewEntityTable = $this->reviewsCollection->getTable('review_entity');
         $this->reviewsCollection->join($reviewEntityTable, 'main_table.entity_id=' . $reviewEntityTable . '.entity_id', ['entity_code']);
         $this->reviewsCollection->addFieldToFilter('entity_code', \Magento\Review\Model\Review::ENTITY_PRODUCT_CODE);
-        $this->reviewsCollection->addFieldToFilter('entity_pk_value', ['in' => $productIds]);
+        $this->reviewsCollection->addFieldToFilter('main_table.entity_pk_value', ['in' => $productIds]);
     }
 
     abstract protected function getProductIds(\Magento\Catalog\Model\Product $product);
