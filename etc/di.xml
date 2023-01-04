@@ -41,4 +41,8 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Review\Model\Review">
+        <plugin name="use_preloaded_summary" type="MageSuite\Review\Plugin\Review\Model\Review\UsePreloadedSummary" sortOrder="100"/>
+    </type>
 </config>
