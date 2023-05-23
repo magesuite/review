@@ -33,5 +33,7 @@ class AssignReviewToMultipleStores extends \Symfony\Component\Console\Command\Co
         }
 
         $this->multipleStoreAssignerFactory->create()->execute();
+
+        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }
