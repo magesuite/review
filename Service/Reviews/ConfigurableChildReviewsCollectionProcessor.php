@@ -9,30 +9,13 @@ class ConfigurableChildReviewsCollectionProcessor extends ChildReviewsCollection
         return $this->getCollection($product);
     }
 
-    protected function createReviewCollection(\Magento\Catalog\Model\Product $product)
-    {
-        parent::createReviewCollection($product);
-
-        if ($this->configuration->isDisplayingVariantOnConfigurableReviewEnabled()) {
-            $items = $product->getTypeInstance()->getUsedProducts($product);
-            $this->addReviewConfigurationDataToItems($product, $items);
-        }
-
-        return $this->reviewsCollection;
-    }
-
     protected function getProductIds(\Magento\Catalog\Model\Product $product)
     {
         /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $typeInstance */
         $typeInstance = $product->getTypeInstance();
-        $usedProducts = $typeInstance->getUsedProducts($product);
+        $childIds = $typeInstance->getChildrenIds($product->getId());
 
-        $productIds = [$product->getId()];
-        foreach ($usedProducts as $usedProduct) {
-            $productIds[] = $usedProduct->getId();
-        }
-
-        return $productIds;
+        return array_merge($childIds[0], [$product->getId()]);
     }
 
     public function addReviewConfigurationDataToItems(\Magento\Catalog\Api\Data\ProductInterface $product, array &$items): array
@@ -48,11 +31,9 @@ class ConfigurableChildReviewsCollectionProcessor extends ChildReviewsCollection
     protected function getConfigurationData(\Magento\Catalog\Model\Product $configurableProduct, $simpleProductId)
     {
         $configurations = [];
-
         /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $typeInstance */
         $typeInstance = $configurableProduct->getTypeInstance();
         $usedProducts = $typeInstance->getUsedProducts($configurableProduct);
-
         $simpleProduct = array_filter($usedProducts, function ($usedProduct) use ($simpleProductId) { //phpcs:ignore
             return (int)$usedProduct->getId() === (int)$simpleProductId;
         });
