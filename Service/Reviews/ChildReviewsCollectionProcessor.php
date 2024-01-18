@@ -35,12 +35,10 @@ abstract class ChildReviewsCollectionProcessor
     protected function createReviewCollection(\Magento\Catalog\Model\Product $product)
     {
         $productIds = $this->getProductIds($product);
-
         $this->reviewsCollection = $this->reviewsCollectionFactory->create()
             ->addStoreFilter($this->storeManager->getStore()->getId())
             ->addStatusFilter(\Magento\Review\Model\Review::STATUS_APPROVED)
             ->setDateOrder();
-
         $this->addProductFilter($productIds);
 
         return $this->reviewsCollection;
