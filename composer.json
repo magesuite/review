@@ -6,6 +6,9 @@
         "OSL-3.0",
         "AFL-3.0"
     ],
+    "require": {
+        "creativestyle/magesuite-frontend": ">=v3.5.9"
+    },
     "autoload": {
         "files": [
             "registration.php"
