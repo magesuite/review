@@ -5,23 +5,30 @@ namespace MageSuite\Review\Plugin\MageSuite\Frontend\Helper\Review;
 class AddReviewsSummaryFromRelatedSimpleProducts
 {
     protected \Magento\Review\Model\ResourceModel\Rating\Option\Vote\CollectionFactory $voteCollectionFactory;
-    protected \MageSuite\Frontend\Helper\ReviewFactory $reviewHelperFactory;
     protected \MageSuite\Review\Helper\Configuration $configuration;
     protected \MageSuite\Review\Model\Container\ReviewSummaryData $summaryContainer;
     protected \Magento\Store\Model\StoreManagerInterface $storeManager;
+    protected \MageSuite\Frontend\Model\ReviewVoteRepository $reviewVoteRepository;
+    protected \MageSuite\Frontend\Model\ReviewRepository $reviewRepository;
+    protected \MageSuite\Frontend\Helper\Review $reviewHelper;
 
     public function __construct(
         \Magento\Review\Model\ResourceModel\Rating\Option\Vote\CollectionFactory $voteCollectionFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MageSuite\Frontend\Helper\ReviewFactory $reviewHelperFactory,
         \MageSuite\Review\Helper\Configuration $configuration,
-        \MageSuite\Review\Model\Container\ReviewSummaryData $summaryContainer
+        \MageSuite\Review\Model\Container\ReviewSummaryData $summaryContainer,
+        \MageSuite\Frontend\Model\ReviewVoteRepository $reviewVoteRepository,
+        \MageSuite\Frontend\Model\ReviewRepository $reviewRepository,
+        \MageSuite\Frontend\Helper\Review $reviewHelper
     ) {
         $this->voteCollectionFactory = $voteCollectionFactory;
-        $this->reviewHelperFactory = $reviewHelperFactory;
         $this->configuration = $configuration;
         $this->summaryContainer = $summaryContainer;
         $this->storeManager = $storeManager;
+        $this->reviewVoteRepository = $reviewVoteRepository;
+        $this->reviewRepository = $reviewRepository;
+        $this->reviewHelper = $reviewHelper;
     }
 
     public function afterGetReviewSummary(
@@ -47,11 +54,7 @@ class AddReviewsSummaryFromRelatedSimpleProducts
         $this->preloadSummaries($childrenProducts, $product);
 
         foreach ($childrenProducts as $childProduct) {
-            $reviewHelper = $this->reviewHelperFactory->create([
-                'voteCollection' => $this->voteCollectionFactory->create(),
-            ]);
-
-            $childProductReviewData = $reviewHelper->getReviewSummary($childProduct, true);
+            $childProductReviewData = $this->reviewHelper->getReviewSummary($childProduct, true);
             $reviewData = $this->summarizeReviewData($reviewData, $childProductReviewData);
         }
 
@@ -70,6 +73,8 @@ class AddReviewsSummaryFromRelatedSimpleProducts
         $productIds[] = $parentProduct->getId();
 
         $this->summaryContainer->initSummaries($productIds, $storeId);
+        $this->reviewVoteRepository->getVotesByEntities($productIds, $storeId);
+        $this->reviewRepository->getApprovedReviewsIdsByEntities($productIds, $storeId);
     }
 
     protected function summarizeReviewData($baseData, $dataToAdd): array
