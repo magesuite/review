@@ -3,4 +3,8 @@
     <type name="Magento\Catalog\Model\Product">
         <plugin name="allow_adding_of_review_to_child_of_a_configurable" type="MageSuite\Review\Plugin\Catalog\Model\Product\AllowAddingOfReviewToChildOfAConfigurable" sortOrder="10" />
     </type>
+
+    <type name="Magento\Review\Block\Customer\ListCustomer">
+        <plugin name="fix_simple_product_url" type="MageSuite\Review\Plugin\Magento\Review\Block\Customer\ListCustomer\FixSimpleProductUrl" sortOrder="10" />
+    </type>
 </config>
