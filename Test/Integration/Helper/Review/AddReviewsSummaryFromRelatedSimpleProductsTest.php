@@ -10,14 +10,11 @@ namespace MageSuite\Review\Test\Integration\Helper\Review;
 class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\TestCase
 {
     protected ?\Magento\TestFramework\ObjectManager $objectManager;
-
     protected ?\MageSuite\Review\Test\Integration\Helper\Review $testReviewHelper;
-
     protected ?\MageSuite\Frontend\Helper\Review $frontendReviewHelper;
-
     protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
-
     protected ?\Magento\Review\Model\Review $reviewModel;
+    protected ?\Magento\Review\Model\AppendSummaryData $appendSummaryData;
 
     public function setUp(): void
     {
@@ -26,6 +23,7 @@ class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\
         $this->frontendReviewHelper = $this->objectManager->create(\MageSuite\Frontend\Helper\Review::class);
         $this->productRepository = $this->objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         $this->reviewModel = $this->objectManager->create(\Magento\Review\Model\Review::class);
+        $this->appendSummaryData = $this->objectManager->get(\Magento\Review\Model\AppendSummaryData::class);
     }
 
     /**
@@ -43,7 +41,7 @@ class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\
 
         $product = $this->productRepository->get('configurable');
 
-        $this->reviewModel->getEntitySummary($product, 1);
+        $this->appendSummaryData->execute($product, $product->getStoreId(), \Magento\Review\Model\Review::ENTITY_PRODUCT_CODE);
 
         $reviewSummary = $this->frontendReviewHelper->getReviewSummary($product);
 
@@ -66,7 +64,7 @@ class AddReviewsSummaryFromRelatedSimpleProductsTest extends \PHPUnit\Framework\
 
         $product = $this->productRepository->get('grouped-product');
 
-        $this->reviewModel->getEntitySummary($product, 1);
+        $this->appendSummaryData->execute($product, $product->getStoreId(), \Magento\Review\Model\Review::ENTITY_PRODUCT_CODE);
 
         $reviewSummary = $this->frontendReviewHelper->getReviewSummary($product);
 
