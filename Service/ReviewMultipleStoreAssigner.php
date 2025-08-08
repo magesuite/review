@@ -1,32 +1,34 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MageSuite\Review\Service;
 
 class ReviewMultipleStoreAssigner
 {
+    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
     protected \Magento\Store\Model\StoreManagerInterface $storeManager;
-
+    protected \Magento\Review\Model\ResourceModel\Review\CollectionFactory $reviewCollectionFactory;
     protected \MageSuite\Review\Helper\Configuration $configuration;
 
-    protected \Magento\Review\Model\ResourceModel\Review\CollectionFactory $reviewCollectionFactory;
-
-    protected \Magento\Framework\App\ResourceConnection $resourceConnection;
+    protected array $processedReviewIds = [];
 
     public function __construct(
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \MageSuite\Review\Helper\Configuration $configuration,
         \Magento\Review\Model\ResourceModel\Review\CollectionFactory $reviewCollectionFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection
+        \MageSuite\Review\Helper\Configuration $configuration
     ) {
-        $this->storeManager = $storeManager;
-        $this->configuration = $configuration;
-        $this->reviewCollectionFactory = $reviewCollectionFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->storeManager = $storeManager;
+        $this->reviewCollectionFactory = $reviewCollectionFactory;
+        $this->configuration = $configuration;
     }
 
     public function execute(): void
     {
+        $this->linkAllRatingsToAllStores();
+
         foreach ($this->storeManager->getStores() as $store) {
             if (!$this->configuration->isShareReviewsBetweenStoresEnabled($store->getId())) {
                 continue;
@@ -36,9 +38,46 @@ class ReviewMultipleStoreAssigner
         }
     }
 
-    protected function process(\Magento\Store\Api\Data\StoreInterface $store)
+    protected function linkAllRatingsToAllStores(): void
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $ratingTable = $connection->getTableName('rating');
+        $ratingStoreTable = $connection->getTableName('rating_store');
+        $storeTable = $connection->getTableName('store');
+
+        $ratingSelect = $connection->select()->from($ratingTable, ['rating_id']);
+        $ratingIds = $connection->fetchCol($ratingSelect);
+
+        $storeSelect = $connection->select()->from($storeTable, ['store_id']);
+        $storeIds = $connection->fetchCol($storeSelect);
+
+        if (empty($ratingIds) || empty($storeIds)) {
+            return;
+        }
+
+        $data = [];
+        foreach ($ratingIds as $ratingId) {
+            foreach ($storeIds as $storeId) {
+                $data[] = [
+                    'rating_id' => $ratingId,
+                    'store_id' => $storeId
+                ];
+            }
+        }
+
+        if (!empty($data)) {
+            $connection->insertOnDuplicate($ratingStoreTable, $data, ['rating_id', 'store_id']);
+        }
+    }
+
+    protected function process(\Magento\Store\Api\Data\StoreInterface $store): void
     {
         $additionalStoreIds = $this->configuration->getAdditionalStoresForShareReviewsBetweenStores($store);
+
+        $currentStoreId = (int)$store->getId();
+        $additionalStoreIds = array_filter($additionalStoreIds, function($storeId) use ($currentStoreId) {
+            return (int)$storeId !== $currentStoreId;
+        });
 
         if (empty($additionalStoreIds)) {
             return;
@@ -48,24 +87,31 @@ class ReviewMultipleStoreAssigner
             ->addStoreData()
             ->addStoreFilter($store->getId())
             ->setPageSize(500);
-        $lastPage = $collection->getLastPageNumber();
-        $page = 1;
-        $conditions = [];
 
-        foreach ($additionalStoreIds as $additionalStoreId) {
-            $conditions[] = $collection->getConnection()->quoteInto('store.store_id != ?', $additionalStoreId);
+        if (!empty($this->processedReviewIds)) {
+            $collection->addFieldToFilter('main_table.review_id', ['nin' => $this->processedReviewIds]);
         }
 
-        $collection->getSelect()
-            ->where(implode(' OR ', $conditions));
+        $lastPage = $collection->getLastPageNumber();
+        $page = 1;
 
         while ($page <= $lastPage) {
             $collection->setCurPage($page)->load();
+
+            $reviewIds = [];
             /** @var \Magento\Review\Model\Review $review */
             foreach ($collection as $review) {
-                $this->addRatingToStore($review->getId(), $additionalStoreIds);
-                $review->save();
-                $review->aggregate();
+                $reviewId = $review->getId();
+                $reviewIds[] = $reviewId;
+                $this->processedReviewIds[] = $reviewId;
+            }
+
+            if (!empty($reviewIds)) {
+                $this->addReviewsToStores($reviewIds, $additionalStoreIds);
+
+                foreach ($collection as $review) {
+                    $review->aggregate();
+                }
             }
 
             $page++;
@@ -73,34 +119,23 @@ class ReviewMultipleStoreAssigner
         }
     }
 
-    protected function addRatingToStore($reviewId, $storeIds): void
+    protected function addReviewsToStores(array $reviewIds, array $storeIds): void
     {
-        $ratingId = $this->getRatingIdByReview($reviewId);
-
-        if (!$ratingId) {
-            return;
-        }
-
         $connection = $this->resourceConnection->getConnection();
+        $reviewStoreTable = $connection->getTableName('review_store');
+
         $data = [];
-
-        foreach ($storeIds as $storeId) {
-            $data[] = [
-                'rating_id' => $ratingId,
-                'store_id' => $storeId
-            ];
+        foreach ($reviewIds as $reviewId) {
+            foreach ($storeIds as $storeId) {
+                $data[] = [
+                    'review_id' => $reviewId,
+                    'store_id' => $storeId
+                ];
+            }
         }
 
-        $connection->insertOnDuplicate('rating_store', $data, ['rating_id', 'store_id']);
-    }
-
-    protected function getRatingIdByReview($reviewId): int
-    {
-        $connection = $this->resourceConnection->getConnection();
-        $select = $connection->select()
-            ->from($connection->getTableName('rating_option_vote'), ['rating_id'])
-            ->where('review_id = ?', $reviewId);
-
-        return (int)$connection->fetchOne($select);
+        if (!empty($data)) {
+            $connection->insertOnDuplicate($reviewStoreTable, $data, ['review_id', 'store_id']);
+        }
     }
 }
