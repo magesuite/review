@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\Review\Console\Command;
 
 class AssignReviewToMultipleStores extends \Symfony\Component\Console\Command\Command
@@ -17,16 +19,14 @@ class AssignReviewToMultipleStores extends \Symfony\Component\Console\Command\Co
         $this->multipleStoreAssignerFactory = $multipleStoreAssignerFactory;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('magesuite:review:assign')
             ->setDescription('Assign reviews to multiple stores');
     }
 
-    protected function execute(
-        \Symfony\Component\Console\Input\InputInterface $input,
-        \Symfony\Component\Console\Output\OutputInterface $output
-    ) {
+    protected function execute(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output): int
+    {
         try {
             $this->state->setAreaCode(\Magento\Framework\App\Area::AREA_ADMINHTML);
         } catch (\Exception $e) { //phpcs:ignore
