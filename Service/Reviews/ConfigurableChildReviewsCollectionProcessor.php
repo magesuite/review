@@ -28,7 +28,7 @@ class ConfigurableChildReviewsCollectionProcessor extends ChildReviewsCollection
         return $items;
     }
 
-    protected function getConfigurationData(\Magento\Catalog\Model\Product $configurableProduct, $simpleProductId)
+    public function getConfigurationData(\Magento\Catalog\Model\Product $configurableProduct, $simpleProductId)
     {
         $configurations = [];
         /** @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable $typeInstance */
