@@ -16,11 +16,26 @@ define([
              * @private
              */
             _init: function () {
-                if (!!this.element.parents('.cs-reviews__form').length) {
+                const $parentForm = this.element.parents('.cs-reviews__form');
+                if (!!$parentForm.length) {
                     this.options.isInReviewForm = true;
                 }
 
                 this._super();
+
+                // Update aria-label of swatch options if widget is used in review form.
+                if (this.options.isInReviewForm) {
+                    const $swatchOptions = $parentForm.find('.swatch-attribute-options');
+
+                    if ($swatchOptions.length) {
+                        const ariaLabel = $swatchOptions.attr('aria-label');
+
+                        if (ariaLabel) {
+                            const reviewLabel = $.mage.__('review');
+                            $swatchOptions.attr('aria-label', reviewLabel + ' ' + ariaLabel);
+                        }
+                    }
+                }
             },
 
             /**
@@ -58,6 +73,7 @@ define([
                     $input.val('');
                     $label.text('');
                     $this.attr('aria-checked', false);
+                    $wrapper.attr('aria-activedescendant', '');
                 } else {
                     $parent.attr('data-option-selected', $this.data('option-id')).find('.selected').removeClass('selected');
                     $label.text($this.data('option-label'));
